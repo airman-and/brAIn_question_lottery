@@ -1153,12 +1153,24 @@ input:checked + .slider:before {
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1.15), box-shadow 0.3s ease;
   cursor: pointer;
   border-radius: 24px;
   border: none !important;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.95);
-  animation: cardFlipReveal 1.4s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
+  animation: cardEntranceFaceDown 0.8s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
+}
+
+/* Float active state before flip */
+.winner-card.playing-card:not(.flipped) {
+  animation: cardEntranceFaceDown 0.8s cubic-bezier(0.2, 0.85, 0.25, 1) forwards,
+             cardFloatFaceDown 4s infinite ease-in-out 0.8s;
+}
+
+/* Flipped State */
+.winner-card.playing-card.flipped {
+  transform: perspective(1800px) rotateY(180deg) scale(1) !important;
+  animation: cardFloatFaceUp 4s infinite ease-in-out;
 }
 
 /* Shared Face Styling */
@@ -1175,6 +1187,30 @@ input:checked + .slider:before {
   overflow: hidden;
 }
 
+/* Bulletproof 3D Card Face Transitions */
+.winner-card.playing-card:not(.flipped) .card-back {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+}
+.winner-card.playing-card:not(.flipped) .card-front {
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1;
+}
+.winner-card.playing-card.flipped .card-back {
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1;
+  transition: opacity 0.3s ease 0.3s, visibility 0.3s ease 0.3s;
+}
+.winner-card.playing-card.flipped .card-front {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+  transition: opacity 0.3s ease 0.3s, visibility 0.3s ease 0.3s;
+}
+
 /* CARD BACK: Cyber-Victorian Technological Gold-Emerald Lattice */
 .card-back {
   background: radial-gradient(circle at center, #0a3d2c 0%, #03140e 65%, #010705 100%);
@@ -1188,7 +1224,6 @@ input:checked + .slider:before {
   transform: rotateY(0deg) translateZ(1px);
   backface-visibility: visible !important;
   -webkit-backface-visibility: visible !important;
-  animation: flipHideBack 1.4s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
 }
 
 /* Shimmering Tech Corner Brackets */
@@ -1734,4 +1769,208 @@ input:checked + .slider:before {
   .right-panel {
     order: 3;
   }
+}
+
+/* ==========================================================================
+   Click-to-Reveal, Sound, and Deck Stats Additions (Items A, B, C, D)
+   ========================================================================= */
+
+/* Click-to-Reveal Prompt */
+.click-to-reveal-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 15px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  color: var(--primary-accent);
+  text-shadow: 0 0 10px rgba(var(--primary-accent-rgb), 0.6);
+  animation: promptPulse 1.6s infinite alternate ease-in-out;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.winner-card.suit-red .click-to-reveal-prompt {
+  color: #f43f5e;
+  text-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
+}
+
+.prompt-text {
+  font-size: 0.85rem;
+}
+
+.prompt-arrow {
+  font-size: 0.75rem;
+  animation: bounceArrow 0.8s infinite alternate ease-in-out;
+}
+
+@keyframes promptPulse {
+  0% { opacity: 0.35; transform: scale(0.96); }
+  100% { opacity: 1; transform: scale(1.04); }
+}
+
+@keyframes bounceArrow {
+  0% { transform: translateY(-2px); }
+  100% { transform: translateY(2px); }
+}
+
+/* Card Motion Keyframes */
+@keyframes cardEntranceFaceDown {
+  0% {
+    transform: perspective(1800px) rotateY(0deg) rotateX(25deg) scale(0.35) translateY(120px);
+    opacity: 0;
+  }
+  100% {
+    transform: perspective(1800px) rotateY(0deg) rotateX(0deg) scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes cardFloatFaceDown {
+  0% {
+    transform: perspective(1800px) rotateY(0deg) rotateX(0deg) translateY(0);
+  }
+  50% {
+    transform: perspective(1800px) rotateY(0deg) rotateX(2deg) translateY(-8px);
+  }
+  100% {
+    transform: perspective(1800px) rotateY(0deg) rotateX(0deg) translateY(0);
+  }
+}
+
+@keyframes cardFloatFaceUp {
+  0% {
+    transform: perspective(1800px) rotateY(180deg) rotateX(0deg) translateY(0);
+  }
+  50% {
+    transform: perspective(1800px) rotateY(180deg) rotateX(2deg) translateY(-8px);
+  }
+  100% {
+    transform: perspective(1800px) rotateY(180deg) rotateX(0deg) translateY(0);
+  }
+}
+
+/* Live Card Deck Statistics Dashboard */
+.stats-dashboard {
+  background: rgba(6, 19, 15, 0.45);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.05);
+}
+
+.stats-header {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.stats-header-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.25), transparent);
+  margin-left: 12px;
+}
+
+.stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 85px 1fr 25px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.stats-row.text-red {
+  color: #f43f5e !important;
+}
+
+.stats-label {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.stats-bar-container {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.stats-bar {
+  height: 100%;
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.stats-bar.black {
+  background: var(--primary-accent);
+  box-shadow: 0 0 8px rgba(var(--primary-accent-rgb), 0.5);
+}
+
+.stats-bar.red {
+  background: #f43f5e;
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
+}
+
+.stats-value {
+  font-family: 'Outfit', sans-serif;
+  text-align: right;
+  font-weight: 700;
+}
+
+.stats-footer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(16, 185, 129, 0.12);
+}
+
+.footer-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.footer-stat .lbl {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.footer-stat .val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary-accent);
+}
+
+.footer-stat .joker-gold {
+  color: var(--gold-accent) !important;
+}
+
+.winner-modal-actions.hidden {
+  display: none !important;
 }

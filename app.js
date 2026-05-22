@@ -154,36 +154,33 @@ document.addEventListener('DOMContentLoaded', () => {
     osc.stop(audioCtx.currentTime + duration);
   };
 
-  // High-End Cybermatic Dramatic Chord SFX
-  const playWinnerSynthSFX = () => {
+  // Hover Shimmer SFX: Very light, high-frequency resonance beep
+  const playShimmerSFX = () => {
     initAudio();
     if (!audioCtx) return;
 
-    const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99]; // C Major Sci-Fi celebratory chord
-    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
 
-    notes.forEach((freq, idx) => {
-      const osc = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      const delay = idx * 0.06;
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
 
-      osc.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1500, audioCtx.currentTime);
 
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(freq / 2, now + delay);
-      osc.frequency.exponentialRampToValueAtTime(freq * 2, now + delay + 1.5);
+    gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
 
-      gainNode.gain.setValueAtTime(0.0, now);
-      gainNode.gain.linearRampToValueAtTime(0.08, now + delay + 0.05);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, now + delay + 2.0);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.05);
+  };
 
-      osc.start(now + delay);
-      osc.stop(now + delay + 2.1);
-    });
+  // Swoosh SFX: Wind-cutting swoosh using bandpass modulated white noise
+  const playSwooshSFX = () => {
+    initAudio();
+    if (!audioCtx) return;
 
-    // Add high frequency white noise splash for wind celebration
-    const bufferSize = audioCtx.sampleRate * 1.5;
+    const bufferSize = audioCtx.sampleRate * 0.35; // 0.35s swoosh duration
     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
@@ -193,22 +190,171 @@ document.addEventListener('DOMContentLoaded', () => {
     const noiseNode = audioCtx.createBufferSource();
     noiseNode.buffer = buffer;
 
-    const noiseFilter = audioCtx.createBiquadFilter();
-    noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.setValueAtTime(2000, now);
-    noiseFilter.frequency.exponentialRampToValueAtTime(100, now + 1.5);
-    noiseFilter.Q.setValueAtTime(2.0, now);
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1600, audioCtx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.35);
+    filter.Q.setValueAtTime(4.0, audioCtx.currentTime);
 
-    const noiseGain = audioCtx.createGain();
-    noiseGain.gain.setValueAtTime(0.05, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.5);
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.setValueAtTime(0.18, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
 
-    noiseNode.connect(noiseFilter);
-    noiseFilter.connect(noiseGain);
-    noiseGain.connect(audioCtx.destination);
+    noiseNode.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
 
-    noiseNode.start(now);
-    noiseNode.stop(now + 1.6);
+    noiseNode.start();
+    noiseNode.stop(audioCtx.currentTime + 0.35);
+  };
+
+  // High-End Cybermatic Dramatic Chord & Joker Glitch Riser SFX
+  const playWinnerSynthSFX = () => {
+    initAudio();
+    if (!audioCtx) return;
+
+    const now = audioCtx.currentTime;
+    const isJoker = currentDrawnCard && currentDrawnCard.rank === 'Joker';
+
+    if (isJoker) {
+      // FM Synth Cyber-Glitch Riser for Joker Card Reveal
+      const osc1 = audioCtx.createOscillator();
+      const osc2 = audioCtx.createOscillator();
+      const fmOsc = audioCtx.createOscillator();
+      const fmGain = audioCtx.createGain();
+      
+      const filter = audioCtx.createBiquadFilter();
+      const gainNode = audioCtx.createGain();
+
+      osc1.type = 'sawtooth';
+      osc2.type = 'sawtooth';
+      fmOsc.type = 'sine';
+
+      // Sweep frequencies from low rumble (60Hz) to piercing cyber pitch (900Hz)
+      osc1.frequency.setValueAtTime(60, now);
+      osc1.frequency.exponentialRampToValueAtTime(900, now + 2.4);
+      
+      osc2.frequency.setValueAtTime(61.5, now);
+      osc2.frequency.exponentialRampToValueAtTime(905, now + 2.4);
+
+      // FM index & freq modulation sweeps
+      fmOsc.frequency.setValueAtTime(15, now);
+      fmOsc.frequency.exponentialRampToValueAtTime(280, now + 2.4);
+
+      fmGain.gain.setValueAtTime(40, now);
+      fmGain.gain.exponentialRampToValueAtTime(750, now + 2.4);
+
+      // Lowpass resonance sweep
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(120, now);
+      filter.frequency.exponentialRampToValueAtTime(2600, now + 2.4);
+      filter.Q.setValueAtTime(9.0, now);
+
+      // Dramatic Riser Volume envelope
+      gainNode.gain.setValueAtTime(0.001, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.16, now + 1.8);
+      gainNode.gain.linearRampToValueAtTime(0.24, now + 2.2);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 2.6);
+
+      // Connect FM
+      fmOsc.connect(fmGain);
+      fmGain.connect(osc1.frequency);
+      fmGain.connect(osc2.frequency);
+
+      osc1.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      fmOsc.start(now);
+      osc1.start(now);
+      osc2.start(now);
+
+      fmOsc.stop(now + 2.7);
+      osc1.stop(now + 2.7);
+      osc2.stop(now + 2.7);
+
+      // Spooky crackle overlay using filtered white noise
+      const bufferSize = audioCtx.sampleRate * 2.4;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+
+      const noiseNode = audioCtx.createBufferSource();
+      noiseNode.buffer = buffer;
+
+      const noiseFilter = audioCtx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.setValueAtTime(400, now);
+      noiseFilter.frequency.exponentialRampToValueAtTime(7500, now + 2.4);
+      noiseFilter.Q.setValueAtTime(4.0, now);
+
+      const noiseGain = audioCtx.createGain();
+      noiseGain.gain.setValueAtTime(0.008, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.07, now + 2.1);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 2.5);
+
+      noiseNode.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+
+      noiseNode.start(now);
+      noiseNode.stop(now + 2.6);
+
+    } else {
+      // Standard Majestic C Major Sci-Fi Chord
+      const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99]; 
+
+      notes.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        const delay = idx * 0.06;
+
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq / 2, now + delay);
+        osc.frequency.exponentialRampToValueAtTime(freq * 2, now + delay + 1.5);
+
+        gainNode.gain.setValueAtTime(0.0, now);
+        gainNode.gain.linearRampToValueAtTime(0.08, now + delay + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + delay + 2.0);
+
+        osc.start(now + delay);
+        osc.stop(now + delay + 2.1);
+      });
+
+      // High frequency white noise splash
+      const bufferSize = audioCtx.sampleRate * 1.5;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+
+      const noiseNode = audioCtx.createBufferSource();
+      noiseNode.buffer = buffer;
+
+      const noiseFilter = audioCtx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.setValueAtTime(2000, now);
+      noiseFilter.frequency.exponentialRampToValueAtTime(100, now + 1.5);
+      noiseFilter.Q.setValueAtTime(2.0, now);
+
+      const noiseGain = audioCtx.createGain();
+      noiseGain.gain.setValueAtTime(0.05, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.5);
+
+      noiseNode.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+
+      noiseNode.start(now);
+      noiseNode.stop(now + 1.6);
+    }
   };
 
   // ==========================================================================
@@ -217,9 +363,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let particles = [];
   let animationId = null;
+  let activePalette = 'default';
 
   class Particle {
-    constructor() {
+    constructor(palette = activePalette) {
       this.x = canvas.width / 2 + (Math.random() * 80 - 40);
       this.y = canvas.height + 20;
       this.radius = Math.random() * 5 + 3;
@@ -234,14 +381,34 @@ document.addEventListener('DOMContentLoaded', () => {
       this.gravity = 0.22;
       this.friction = 0.985;
       
-      // Elegant Emerald, Gold, Mint, and White palettes
-      const colors = [
-        '#00ffc4', // brAIn Mint
-        '#10b981', // brAIn Emerald
-        '#0b2b20', // deep green
-        '#f59e0b', // gold glow
-        '#ffffff'  // white sparkles
-      ];
+      // Select palette
+      let colors;
+      if (palette === 'black_joker') {
+        colors = [
+          '#c084fc', // neon purple
+          '#00ffc4', // mint green
+          '#cbd5e1', // silver
+          '#06b6d4', // teal
+          '#ffffff'  // white
+        ];
+      } else if (palette === 'red_joker') {
+        colors = [
+          '#991b1b', // deep crimson
+          '#e11d48', // ruby red
+          '#fda4af', // coral pink
+          '#f59e0b', // gold
+          '#fffbeb'  // warm white
+        ];
+      } else {
+        // Elegant Emerald, Gold, Mint, and White palettes
+        colors = [
+          '#00ffc4', // brAIn Mint
+          '#10b981', // brAIn Emerald
+          '#0b2b20', // deep green
+          '#f59e0b', // gold glow
+          '#ffffff'  // white sparkles
+        ];
+      }
       this.color = colors[Math.floor(Math.random() * colors.length)];
       
       this.opacity = 1;
@@ -283,13 +450,14 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.height = window.innerHeight;
   };
 
-  const startConfetti = () => {
+  const startConfetti = (palette = 'default') => {
     resizeCanvas();
     particles = [];
+    activePalette = palette;
     
     // Spawn 150 explosion particles
     for (let i = 0; i < 150; i++) {
-      particles.push(new Particle());
+      particles.push(new Particle(palette));
     }
 
     if (animationId) {
@@ -305,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Periodically spawn slow falling sky confetti if there are active particles
     if (particles.length > 10 && Math.random() < 0.08) {
       // Spawn standard sky drift particle
-      const p = new Particle();
+      const p = new Particle(activePalette);
       p.x = Math.random() * canvas.width;
       p.y = -20;
       p.vy = Math.random() * 3 + 1;
@@ -636,7 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Reveal Winner Celebration Frame
-  const revealWinner = () => {
+  const revealWinner = (instantReveal = false) => {
     // Log winner
     const now = new Date();
     const timestampStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
@@ -652,6 +820,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardEl = document.querySelector('.winner-card');
     if (cardEl) {
       cardEl.style.transform = '';
+      cardEl.classList.remove('flipped'); // Always start unflipped
+      
       if (currentDrawnCard && currentDrawnCard.isRed) {
         cardEl.classList.add('suit-red');
       } else {
@@ -723,19 +893,64 @@ document.addEventListener('DOMContentLoaded', () => {
       authorityEl.innerText = a1Names.includes(currentWinner) ? 'A1' : 'A2';
     }
 
+    // Hide actions container initially
+    const actionsContainer = document.getElementById('winner-actions-container');
+    if (actionsContainer) {
+      actionsContainer.classList.add('hidden');
+    }
+
     winnerModal.classList.remove('hidden');
     setTimeout(() => {
       winnerModal.classList.add('active');
     }, 50);
 
-    // SFX & VFX triggers
-    playWinnerSynthSFX();
-    startConfetti();
+    const getPalette = () => {
+      if (currentDrawnCard && currentDrawnCard.rank === 'Joker') {
+        return currentDrawnCard.isRed ? 'red_joker' : 'black_joker';
+      }
+      return 'default';
+    };
 
-    // English AI Voice synthesization with a slight delay to blend perfectly with celebratory chords
-    setTimeout(() => {
-      playWinnerTTS(currentWinner, currentDrawnCard);
-    }, 600);
+    if (instantReveal) {
+      // Auto flip for instant mode
+      if (cardEl) {
+        cardEl.classList.add('flipped');
+      }
+      playWinnerSynthSFX();
+      startConfetti(getPalette());
+      
+      setTimeout(() => {
+        playWinnerTTS(currentWinner, currentDrawnCard);
+      }, 600);
+
+      if (actionsContainer) {
+        actionsContainer.classList.remove('hidden');
+      }
+    } else {
+      // Click to Flip manual mode
+      const onCardClick = () => {
+        playSwooshSFX();
+        if (cardEl) {
+          cardEl.classList.add('flipped');
+        }
+        
+        // Fire FX exactly at 350ms midpoint when the card front is revealed
+        setTimeout(() => {
+          playWinnerSynthSFX();
+          startConfetti(getPalette());
+          
+          setTimeout(() => {
+            playWinnerTTS(currentWinner, currentDrawnCard);
+          }, 300);
+
+          if (actionsContainer) {
+            actionsContainer.classList.remove('hidden');
+          }
+        }, 350);
+      };
+      
+      cardEl.addEventListener('click', onCardClick, { once: true });
+    }
 
     // Render updates
     renderParticipants();
@@ -750,6 +965,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardEl = document.querySelector('.winner-card');
     const shineEl = document.querySelector('.winner-card-shine');
     if (cardEl) {
+      cardEl.classList.remove('flipped');
       cardEl.style.transform = '';
       cardEl.style.boxShadow = '';
       if (shineEl) {
@@ -851,6 +1067,7 @@ document.addEventListener('DOMContentLoaded', () => {
       empty.innerText = '아직 추첨된 당첨자가 없습니다.';
       winnersList.appendChild(empty);
       countWinners.innerText = '0명';
+      renderStats();
       return;
     }
 
@@ -887,6 +1104,72 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     countWinners.innerText = `${winners.length}명`;
+    renderStats();
+  };
+
+  // Live Card Deck Analytics Engine
+  const renderStats = () => {
+    let spades = 0;
+    let clubs = 0;
+    let hearts = 0;
+    let diamonds = 0;
+    let a1 = 0;
+    let a2 = 0;
+    let jokers = 0;
+
+    winners.forEach(w => {
+      if (w.card) {
+        if (w.card.rank === 'Joker') {
+          jokers++;
+        } else {
+          if (w.card.suitName === 'spades') spades++;
+          else if (w.card.suitName === 'clubs') clubs++;
+          else if (w.card.suitName === 'hearts') hearts++;
+          else if (w.card.suitName === 'diamonds') diamonds++;
+
+          // Tally authority groups based on the student name
+          if (a1Names.includes(w.name)) {
+            a1++;
+          } else {
+            a2++;
+          }
+        }
+      }
+    });
+
+    const totalSuits = spades + clubs + hearts + diamonds;
+    const pctSpades = totalSuits > 0 ? (spades / totalSuits) * 100 : 0;
+    const pctClubs = totalSuits > 0 ? (clubs / totalSuits) * 100 : 0;
+    const pctHearts = totalSuits > 0 ? (hearts / totalSuits) * 100 : 0;
+    const pctDiamonds = totalSuits > 0 ? (diamonds / totalSuits) * 100 : 0;
+
+    const barSpades = document.getElementById('stats-bar-spades');
+    const barClubs = document.getElementById('stats-bar-clubs');
+    const barHearts = document.getElementById('stats-bar-hearts');
+    const barDiamonds = document.getElementById('stats-bar-diamonds');
+
+    const valSpades = document.getElementById('stats-val-spades');
+    const valClubs = document.getElementById('stats-val-clubs');
+    const valHearts = document.getElementById('stats-val-hearts');
+    const valDiamonds = document.getElementById('stats-val-diamonds');
+
+    const valA1 = document.getElementById('stats-val-a1');
+    const valA2 = document.getElementById('stats-val-a2');
+    const valJokers = document.getElementById('stats-val-jokers');
+
+    if (barSpades) barSpades.style.width = `${pctSpades}%`;
+    if (barClubs) barClubs.style.width = `${pctClubs}%`;
+    if (barHearts) barHearts.style.width = `${pctHearts}%`;
+    if (barDiamonds) barDiamonds.style.width = `${pctDiamonds}%`;
+
+    if (valSpades) valSpades.innerText = spades;
+    if (valClubs) valClubs.innerText = clubs;
+    if (valHearts) valHearts.innerText = hearts;
+    if (valDiamonds) valDiamonds.innerText = diamonds;
+
+    if (valA1) valA1.innerText = a1;
+    if (valA2) valA2.innerText = a2;
+    if (valJokers) valJokers.innerText = jokers;
   };
 
   // Parse new input names
@@ -987,6 +1270,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const shineElement = document.querySelector('.winner-card-shine');
 
   if (cardElement) {
+    cardElement.addEventListener('mouseenter', () => {
+      if (!cardElement.classList.contains('flipped')) {
+        playShimmerSFX();
+      }
+    });
+
     cardElement.addEventListener('mousemove', (e) => {
       const rect = cardElement.getBoundingClientRect();
       const x = e.clientX - rect.left;

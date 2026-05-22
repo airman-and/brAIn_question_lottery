@@ -138,6 +138,50 @@
           </ul>
         </div>
 
+        <!-- Live Card Deck Statistics Dashboard -->
+        <div class="stats-dashboard">
+          <div class="stats-header">
+            <span>SYSTEM DECK ANALYTICS</span>
+            <span class="stats-header-line"></span>
+          </div>
+          <div class="stats-grid">
+            <div class="stats-row">
+              <span class="stats-label">♠ SPADES</span>
+              <div class="stats-bar-container"><div id="stats-bar-spades" class="stats-bar black" style="width: 0%;"></div></div>
+              <span id="stats-val-spades" class="stats-value">0</span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">♣ CLUBS</span>
+              <div class="stats-bar-container"><div id="stats-bar-clubs" class="stats-bar black" style="width: 0%;"></div></div>
+              <span id="stats-val-clubs" class="stats-value">0</span>
+            </div>
+            <div class="stats-row text-red">
+              <span class="stats-label">♥ HEARTS</span>
+              <div class="stats-bar-container"><div id="stats-bar-hearts" class="stats-bar red" style="width: 0%;"></div></div>
+              <span id="stats-val-hearts" class="stats-value">0</span>
+            </div>
+            <div class="stats-row text-red">
+              <span class="stats-label">♦ DIAMONDS</span>
+              <div class="stats-bar-container"><div id="stats-bar-diamonds" class="stats-bar red" style="width: 0%;"></div></div>
+              <span id="stats-val-diamonds" class="stats-value">0</span>
+            </div>
+          </div>
+          <div class="stats-footer">
+            <div class="footer-stat">
+              <span class="lbl">A1 (Odd)</span>
+              <span class="val" id="stats-val-a1">0</span>
+            </div>
+            <div class="footer-stat">
+              <span class="lbl">A2 (Even)</span>
+              <span class="val" id="stats-val-a2">0</span>
+            </div>
+            <div class="footer-stat">
+              <span class="lbl joker-gold">JOKER</span>
+              <span class="val joker-gold" id="stats-val-jokers">0</span>
+            </div>
+          </div>
+        </div>
+
         <div class="history-actions">
           <button id="btn-reset-pool" class="btn btn-danger-outline w-full mb-2">모든 당첨자 추첨 대상 복원</button>
           <button id="btn-clear-history" class="btn btn-danger-outline w-full">추첨 내역 전체 초기화</button>
@@ -204,6 +248,11 @@
             </div>
             <div class="back-center-spade">♠</div>
             <div class="back-tech-text">SKKU AI SOCIETY</div>
+            <!-- Click-to-Reveal Prompt Instruction -->
+            <div class="click-to-reveal-prompt">
+              <span class="prompt-text">CLICK TO REVEAL</span>
+              <span class="prompt-arrow">▼</span>
+            </div>
           </div>
         </div>
 
@@ -254,7 +303,7 @@
               <span class="decor-dot"></span>
             </div>
 
-            <div class="winner-modal-actions">
+            <div class="winner-modal-actions hidden" id="winner-actions-container">
               <button id="btn-close-winner" class="btn btn-primary btn-large">추첨 계속하기</button>
             </div>
           </div>
