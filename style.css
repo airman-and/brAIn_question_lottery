@@ -1162,6 +1162,8 @@ input:checked + .slider:before {
   align-items: center;
   justify-content: center;
   transform: rotateY(0deg) translateZ(1px);
+  backface-visibility: visible !important;
+  -webkit-backface-visibility: visible !important;
   animation: flipHideBack 1.4s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
 }
 
@@ -1292,6 +1294,8 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   padding: 16px;
+  backface-visibility: visible !important;
+  -webkit-backface-visibility: visible !important;
   animation: flipShowFront 1.4s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
 }
 
