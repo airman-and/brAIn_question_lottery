@@ -842,10 +842,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     
-    // Update Card Back Face suit symbol dynamically
-    const backCenterSymbol = document.querySelector('.back-center-spade');
-    if (backCenterSymbol && currentDrawnCard) {
-      backCenterSymbol.innerText = currentDrawnCard.suitSymbol;
+    // Update Card Back Face group identifier dynamically (A1 or A2)
+    const backWinnerGroup = document.getElementById('back-winner-group');
+    if (backWinnerGroup) {
+      backWinnerGroup.innerText = a1Names.includes(currentWinner) ? 'A1' : 'A2';
     }
     
     // Update Card Front Face Details (Rank, Suit, and Large watermark)

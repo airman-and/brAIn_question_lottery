@@ -1321,27 +1321,22 @@ input:checked + .slider:before {
   animation: spinClockwise 15s infinite linear;
 }
 
-/* Golden Center Spade Badge */
-.back-center-spade {
-  font-size: 4.8rem;
+/* Golden Center Group Badge (A1 or A2) */
+.back-center-group {
+  font-family: 'Outfit', sans-serif;
+  font-size: 5.5rem;
+  font-weight: 800;
   color: var(--gold-accent);
   text-shadow: 
     0 0 20px rgba(245, 158, 11, 0.6),
-    0 0 40px rgba(245, 158, 11, 0.3);
+    0 0 45px rgba(245, 158, 11, 0.35);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
-}
-
-.back-tech-text {
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.3em;
-  color: rgba(245, 158, 11, 0.7);
-  text-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
 
@@ -1402,7 +1397,7 @@ input:checked + .slider:before {
   border-color: rgba(244, 63, 94, 0.25) !important;
 }
 .winner-card.suit-red .back-brand span,
-.winner-card.suit-red .back-center-spade {
+.winner-card.suit-red .back-center-group {
   color: #f43f5e !important;
   text-shadow: 
     0 0 20px rgba(244, 63, 94, 0.6),
@@ -1410,10 +1405,6 @@ input:checked + .slider:before {
 }
 .winner-card.suit-red .back-brand {
   text-shadow: 0 0 15px rgba(244, 63, 94, 0.5) !important;
-}
-.winner-card.suit-red .back-tech-text {
-  color: rgba(244, 63, 94, 0.7) !important;
-  text-shadow: 0 0 8px rgba(244, 63, 94, 0.3) !important;
 }
 .winner-card.suit-red .card-corner::after {
   background-color: #f43f5e !important;
