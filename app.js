@@ -505,7 +505,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       const isA1 = a1Names.includes(currentWinner);
       const groupRanks = isA1 ? ['A', '3', '5', '7', '9', 'J', 'K'] : ['2', '4', '6', '8', '10', 'Q'];
-      const randomSuit = SUITS[Math.floor(Math.random() * SUITS.length)];
+      // A1 draws Spades (index 0) or Clubs (index 3), A2 draws Hearts (index 1) or Diamonds (index 2)
+      const allowedSuits = isA1 ? [SUITS[0], SUITS[3]] : [SUITS[1], SUITS[2]];
+      const randomSuit = allowedSuits[Math.floor(Math.random() * allowedSuits.length)];
       const randomRank = groupRanks[Math.floor(Math.random() * groupRanks.length)];
       currentDrawnCard = {
         rank: randomRank,
