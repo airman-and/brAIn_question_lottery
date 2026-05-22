@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let winners = [];      // Array of { name: string, timestamp: string, card?: object }
   let currentWinner = '';
   let currentDrawnCard = null;
+  let activeCardClickListener = null;
 
   // LocalStorage Helper
   const loadState = () => {
@@ -819,6 +820,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set UI
     const cardEl = document.querySelector('.winner-card');
     if (cardEl) {
+      // Cleanup any legacy click listener to prevent double triggering or state pollution
+      if (activeCardClickListener) {
+        cardEl.removeEventListener('click', activeCardClickListener);
+        activeCardClickListener = null;
+      }
+
       cardEl.style.transform = '';
       cardEl.classList.remove('flipped'); // Always start unflipped
       
@@ -928,7 +935,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else {
       // Click to Flip manual mode
-      const onCardClick = () => {
+      activeCardClickListener = () => {
         playSwooshSFX();
         if (cardEl) {
           cardEl.classList.add('flipped');
@@ -949,7 +956,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 350);
       };
       
-      cardEl.addEventListener('click', onCardClick, { once: true });
+      cardEl.addEventListener('click', activeCardClickListener, { once: true });
     }
 
     // Render updates
@@ -963,6 +970,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Reset card tilt styles back to neutral
     const cardEl = document.querySelector('.winner-card');
+    
+    // Clear any active click listener to ensure pristine state for the next draw
+    if (activeCardClickListener && cardEl) {
+      cardEl.removeEventListener('click', activeCardClickListener);
+      activeCardClickListener = null;
+    }
+
     const shineEl = document.querySelector('.winner-card-shine');
     if (cardEl) {
       cardEl.classList.remove('flipped');
@@ -1288,8 +1302,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const rotateX = ((centerY - y) / centerY) * 15;
       const rotateY = ((x - centerX) / centerX) * 15;
 
-      // Apply 3D matrix transform
-      cardElement.style.transform = `perspective(1800px) rotateX(${rotateX}deg) rotateY(${180 - rotateY}deg) scale(1.03)`;
+      const isFlipped = cardElement.classList.contains('flipped');
+
+      // Apply 3D matrix transform based on whether card is flipped
+      if (isFlipped) {
+        cardElement.style.transform = `perspective(1800px) rotateX(${rotateX}deg) rotateY(${180 - rotateY}deg) scale(1.03)`;
+      } else {
+        cardElement.style.transform = `perspective(1800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+      }
+
       const isRedCard = cardElement.classList.contains('suit-red');
       const accentColor = isRedCard ? '244, 63, 94' : '0, 255, 196';
 
@@ -1313,8 +1334,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     cardElement.addEventListener('mouseleave', () => {
-      // Smoothly return card to neutral orientation
-      cardElement.style.transform = `perspective(1800px) rotateX(0deg) rotateY(180deg) scale(1)`;
+      const isFlipped = cardElement.classList.contains('flipped');
+      // Smoothly return card to neutral orientation based on flipped state
+      if (isFlipped) {
+        cardElement.style.transform = `perspective(1800px) rotateX(0deg) rotateY(180deg) scale(1)`;
+      } else {
+        cardElement.style.transform = `perspective(1800px) rotateX(0deg) rotateY(0deg) scale(1)`;
+      }
       cardElement.style.boxShadow = '';
 
       if (shineElement) {

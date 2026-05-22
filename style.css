@@ -1891,7 +1891,7 @@ input:checked + .slider:before {
 
 .stats-row {
   display: grid;
-  grid-template-columns: 85px 1fr 25px;
+  grid-template-columns: 100px 1fr 25px;
   align-items: center;
   gap: 10px;
   font-size: 0.8rem;
@@ -1905,6 +1905,7 @@ input:checked + .slider:before {
 .stats-label {
   font-family: 'Outfit', sans-serif;
   letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 .stats-bar-container {
