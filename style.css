@@ -1147,6 +1147,17 @@ input:checked + .slider:before {
   z-index: 2;
 }
 
+/* Float active state before flip on parent container */
+.winner-card-container:not(:has(.flipped)) {
+  animation: containerEntrance 0.8s cubic-bezier(0.2, 0.85, 0.25, 1) forwards,
+             containerFloatDown 4s infinite ease-in-out 0.8s;
+}
+
+/* Flipped State on parent container */
+.winner-card-container:has(.flipped) {
+  animation: containerFloatUp 4s infinite ease-in-out;
+}
+
 /* 3D Double-Sided Card Structure */
 .winner-card.playing-card {
   width: 100%;
@@ -1158,19 +1169,11 @@ input:checked + .slider:before {
   border-radius: 24px;
   border: none !important;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.95);
-  animation: cardEntranceFaceDown 0.8s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
-}
-
-/* Float active state before flip */
-.winner-card.playing-card:not(.flipped) {
-  animation: cardEntranceFaceDown 0.8s cubic-bezier(0.2, 0.85, 0.25, 1) forwards,
-             cardFloatFaceDown 4s infinite ease-in-out 0.8s;
 }
 
 /* Flipped State */
 .winner-card.playing-card.flipped {
-  transform: perspective(1800px) rotateY(180deg) scale(1) !important;
-  animation: cardFloatFaceUp 4s infinite ease-in-out;
+  transform: perspective(1800px) rotateY(180deg) scale(1);
 }
 
 /* Shared Face Styling */
@@ -1818,38 +1821,38 @@ input:checked + .slider:before {
 }
 
 /* Card Motion Keyframes */
-@keyframes cardEntranceFaceDown {
+@keyframes containerEntrance {
   0% {
-    transform: perspective(1800px) rotateY(0deg) rotateX(25deg) scale(0.35) translateY(120px);
+    transform: scale(0.35) translateY(120px);
     opacity: 0;
   }
   100% {
-    transform: perspective(1800px) rotateY(0deg) rotateX(0deg) scale(1) translateY(0);
+    transform: scale(1) translateY(0);
     opacity: 1;
   }
 }
 
-@keyframes cardFloatFaceDown {
+@keyframes containerFloatDown {
   0% {
-    transform: perspective(1800px) rotateY(0deg) rotateX(0deg) translateY(0);
+    transform: translateY(0);
   }
   50% {
-    transform: perspective(1800px) rotateY(0deg) rotateX(2deg) translateY(-8px);
+    transform: translateY(-8px);
   }
   100% {
-    transform: perspective(1800px) rotateY(0deg) rotateX(0deg) translateY(0);
+    transform: translateY(0);
   }
 }
 
-@keyframes cardFloatFaceUp {
+@keyframes containerFloatUp {
   0% {
-    transform: perspective(1800px) rotateY(180deg) rotateX(0deg) translateY(0);
+    transform: translateY(0);
   }
   50% {
-    transform: perspective(1800px) rotateY(180deg) rotateX(2deg) translateY(-8px);
+    transform: translateY(-8px);
   }
   100% {
-    transform: perspective(1800px) rotateY(180deg) rotateX(0deg) translateY(0);
+    transform: translateY(0);
   }
 }
 
