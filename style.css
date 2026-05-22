@@ -1111,101 +1111,338 @@ input:checked + .slider:before {
 }
 
 .winner-card {
-  width: 440px;
-  padding: 40px;
+  width: 400px;
+  min-height: 580px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   text-align: center;
   z-index: 2;
   position: relative;
   overflow: hidden;
-  border-color: var(--primary-accent) !important;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6),
-              0 0 50px rgba(0, 255, 196, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-  animation: popInWinner 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(6, 19, 15, 0.92) 0%, rgba(2, 6, 5, 0.98) 100%);
+  border: 1px solid rgba(0, 255, 196, 0.4) !important;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9),
+              0 0 60px rgba(0, 255, 196, 0.15),
+              inset 0 0 30px rgba(0, 255, 196, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  animation: popInWinner 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  transition: transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.2s ease;
 }
 
-@keyframes popInWinner {
-  0% { transform: scale(0.85); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+/* Translucent Large brAIn Watermark in the background */
+.winner-card::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 260px;
+  height: 260px;
+  background-image: url('brAIn_logo_v2.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
 }
+
+/* Card Holographic Foil Gradient Effect */
+.winner-card-hologram {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, 
+    rgba(0, 255, 196, 0.05) 0%, 
+    rgba(16, 185, 129, 0.02) 25%, 
+    rgba(245, 158, 11, 0.04) 50%, 
+    rgba(0, 255, 196, 0.02) 75%, 
+    rgba(99, 102, 241, 0.05) 100%
+  );
+  mix-blend-mode: color-dodge;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.7;
+}
+
+/* 3D Spin Entry Animation */
+@keyframes popInWinner {
+  0% {
+    transform: perspective(1500px) rotateY(-180deg) rotateX(15deg) scale(0.4) translateY(100px);
+    opacity: 0;
+  }
+  70% {
+    transform: perspective(1500px) rotateY(15deg) rotateX(-5deg) scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: perspective(1500px) rotateY(0deg) rotateX(0deg) scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Technical Cybermatic Corner Brackets */
+.card-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--primary-accent);
+  pointer-events: none;
+  z-index: 3;
+}
+.corner-tl { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+.corner-tr { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+.corner-bl { bottom: 12px; left: 12px; border-right: none; border-top: none; }
+.corner-br { bottom: 12px; right: 12px; border-left: none; border-top: none; }
 
 .winner-card-shine {
   position: absolute;
   top: 0;
   left: -100%;
-  width: 50%;
+  width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.1), transparent);
-  transform: skewX(-25deg);
-  animation: shineSwipe 4s infinite ease-in-out;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 4;
 }
 
-@keyframes shineSwipe {
-  0% { left: -100%; }
-  30%, 100% { left: 200%; }
+/* Cyber Card Inner Frame */
+.card-inner-frame {
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(0, 255, 196, 0.15);
+  border-radius: 18px;
+  padding: 24px 20px 16px 20px;
+  background: rgba(3, 10, 8, 0.45);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2;
+  box-shadow: inset 0 0 20px rgba(0, 255, 196, 0.05);
+}
+
+/* Top Row: Tech Logo + SIM-style IC Chip */
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.card-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--text-primary);
+  text-shadow: 0 0 10px rgba(var(--primary-accent-rgb), 0.3);
+}
+
+.card-brand span {
+  color: var(--primary-accent);
+}
+
+/* Smart card IC chip container */
+.card-chip {
+  width: 45px;
+  height: 35px;
+  background: linear-gradient(135deg, #ffd54f 0%, #ffb300 50%, #ffa000 100%);
+  border-radius: 6px;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 8px rgba(255, 213, 79, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.chip-line {
+  position: absolute;
+  background-color: rgba(94, 69, 0, 0.65);
+}
+
+.line-h1 { width: 100%; height: 1.5px; top: 33%; left: 0; }
+.line-h2 { width: 100%; height: 1.5px; top: 66%; left: 0; }
+.line-v1 { width: 1.5px; height: 100%; left: 33%; top: 0; }
+.line-v2 { width: 1.5px; height: 100%; left: 66%; top: 0; }
+
+.chip-inner {
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  background: linear-gradient(135deg, #ffe082 0%, #ffca28 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(94, 69, 0, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .winner-badge {
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
   color: var(--gold-accent);
-  padding: 6px 14px;
-  font-size: 0.75rem;
+  padding: 4px 14px;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.25em;
   border-radius: 20px;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
+  margin-top: 10px;
   font-family: 'Outfit', sans-serif;
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.1);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.1);
+  z-index: 2;
 }
 
 .winner-title {
-  font-size: 1.15rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  margin-bottom: 12px;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  margin-bottom: 4px;
   letter-spacing: 0.05em;
+  z-index: 2;
+}
+
+/* Premium Metallic Glass Name Plate */
+.winner-name-plate {
+  width: 100%;
+  padding: 16px 10px;
+  background: rgba(2, 6, 5, 0.75);
+  border: 1px solid rgba(0, 255, 196, 0.2);
+  border-left: 4px solid var(--primary-accent);
+  border-right: 4px solid var(--primary-accent);
+  border-radius: 12px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9),
+              0 10px 25px rgba(0, 0, 0, 0.5);
+  margin: 10px 0 14px 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .winner-name-glow-container {
   position: relative;
-  margin: 16px 0 28px 0;
 }
 
 .winner-reveal-name {
   font-family: 'Black Han Sans', 'Outfit', sans-serif;
-  font-size: 4.8rem;
+  font-size: 4.2rem;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: 0.08em;
-  text-shadow: 0 0 20px rgba(var(--primary-accent-rgb), 0.8),
-               0 0 45px rgba(var(--primary-accent-rgb), 0.3);
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  text-shadow: 0 0 25px rgba(var(--primary-accent-rgb), 0.95),
+               0 0 45px rgba(var(--primary-accent-rgb), 0.5);
   animation: textBeat 0.5s infinite alternate ease-in-out;
 }
 
 @keyframes textBeat {
-  0% { transform: scale(0.97); }
-  100% { transform: scale(1.03); }
+  0% { transform: scale(0.98); }
+  100% { transform: scale(1.02); }
 }
 
 .winner-card-message {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
-  margin-bottom: 32px;
-  line-height: 1.6;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  z-index: 2;
+}
+
+/* Tech Meta Grid */
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 12px 0;
+  background: rgba(2, 6, 5, 0.5);
+  padding: 8px 12px;
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  border-radius: 8px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.meta-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.meta-col:not(:last-child) {
+  border-right: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.meta-lbl {
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+  font-weight: 500;
+}
+
+.meta-val {
+  font-size: 0.72rem;
+  color: var(--primary-accent);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Footer Info & Barcode */
+.card-footer-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 6px;
+  border-top: 1px dashed rgba(16, 185, 129, 0.15);
+  padding-top: 10px;
+}
+
+.barcode {
+  display: flex;
+  gap: 2.2px;
+  height: 20px;
+  align-items: stretch;
+  opacity: 0.8;
+}
+
+.bar-line {
+  background-color: var(--primary-accent);
+  box-shadow: 0 0 4px rgba(var(--primary-accent-rgb), 0.3);
+}
+
+.b-thin { width: 1.2px; }
+.b-medium { width: 2.5px; }
+.b-thick { width: 4.5px; }
+
+.card-serial {
+  font-family: 'Outfit', monospace;
+  font-size: 0.62rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
 }
 
 .winner-modal-actions {
   width: 100%;
+  z-index: 2;
+  margin-top: 16px;
 }
 
 .btn-large {
   width: 100%;
-  padding: 14px 28px;
-  font-size: 1rem;
+  padding: 13px 24px;
+  font-size: 0.95rem;
   letter-spacing: 0.05em;
 }
 

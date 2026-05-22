@@ -609,6 +609,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // Close Winner Modal
   const closeWinnerModal = () => {
     winnerModal.classList.remove('active');
+    
+    // Reset card tilt styles back to neutral
+    const cardEl = document.querySelector('.winner-card');
+    const shineEl = document.querySelector('.winner-card-shine');
+    if (cardEl) {
+      cardEl.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+      cardEl.style.boxShadow = '';
+      if (shineEl) {
+        shineEl.style.background = '';
+        shineEl.style.left = '-100%';
+        shineEl.style.width = '100%';
+        shineEl.style.height = '100%';
+        shineEl.style.transform = '';
+      }
+    }
+
     setTimeout(() => {
       winnerModal.classList.add('hidden');
       
@@ -813,6 +829,61 @@ document.addEventListener('DOMContentLoaded', () => {
     renderParticipants();
     playPlipSound(800, 0.05);
   });
+
+  // ==========================================================================
+  // 7.5 Premium 3D Interactive Parallax Card Tilt
+  // ==========================================================================
+  const cardElement = document.querySelector('.winner-card');
+  const shineElement = document.querySelector('.winner-card-shine');
+
+  if (cardElement) {
+    cardElement.addEventListener('mousemove', (e) => {
+      const rect = cardElement.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      // Dynamic tilt calculations (max 15 degrees)
+      const rotateX = ((centerY - y) / centerY) * 15;
+      const rotateY = ((x - centerX) / centerX) * 15;
+
+      // Apply 3D matrix transform
+      cardElement.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+      cardElement.style.boxShadow = `
+        0 45px 90px rgba(0, 0, 0, 0.95),
+        0 0 75px rgba(0, 255, 196, 0.25),
+        inset 0 0 30px rgba(0, 255, 196, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25)
+      `;
+
+      // Update glossy spot reflection
+      if (shineElement) {
+        const px = (x / rect.width) * 100;
+        const py = (y / rect.height) * 100;
+        shineElement.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255, 255, 255, 0.18) 0%, transparent 60%)`;
+        shineElement.style.left = '0';
+        shineElement.style.width = '100%';
+        shineElement.style.height = '100%';
+        shineElement.style.transform = 'none';
+      }
+    });
+
+    cardElement.addEventListener('mouseleave', () => {
+      // Smoothly return card to neutral orientation
+      cardElement.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+      cardElement.style.boxShadow = '';
+
+      if (shineElement) {
+        shineElement.style.background = '';
+        shineElement.style.left = '-100%';
+        shineElement.style.width = '100%';
+        shineElement.style.height = '100%';
+        shineElement.style.transform = '';
+      }
+    });
+  }
 
   // ==========================================================================
   // 8. Bootstrap initialization
