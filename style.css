@@ -1153,7 +1153,7 @@ input:checked + .slider:before {
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1.15), box-shadow 0.3s ease;
+  transition: transform 1.0s cubic-bezier(0.2, 0.8, 0.2, 1.1), box-shadow 0.3s ease;
   cursor: pointer;
   border-radius: 24px;
   border: none !important;
@@ -1202,13 +1202,13 @@ input:checked + .slider:before {
   opacity: 0;
   visibility: hidden;
   z-index: 1;
-  transition: opacity 0.3s ease 0.3s, visibility 0.3s ease 0.3s;
+  transition: opacity 0.5s ease 0.5s, visibility 0.5s ease 0.5s;
 }
 .winner-card.playing-card.flipped .card-front {
   opacity: 1;
   visibility: visible;
   z-index: 2;
-  transition: opacity 0.3s ease 0.3s, visibility 0.3s ease 0.3s;
+  transition: opacity 0.5s ease 0.5s, visibility 0.5s ease 0.5s;
 }
 
 /* CARD BACK: Cyber-Victorian Technological Gold-Emerald Lattice */

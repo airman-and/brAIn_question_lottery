@@ -928,7 +928,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       setTimeout(() => {
         playWinnerTTS(currentWinner, currentDrawnCard);
-      }, 600);
+      }, 1000);
 
       if (actionsContainer) {
         actionsContainer.classList.remove('hidden');
@@ -941,19 +941,19 @@ document.addEventListener('DOMContentLoaded', () => {
           cardEl.classList.add('flipped');
         }
         
-        // Fire FX exactly at 350ms midpoint when the card front is revealed
+        // Fire FX exactly at 550ms midpoint when the card front is revealed (1.0s flip rate)
         setTimeout(() => {
           playWinnerSynthSFX();
           startConfetti(getPalette());
           
           setTimeout(() => {
             playWinnerTTS(currentWinner, currentDrawnCard);
-          }, 300);
+          }, 400);
 
           if (actionsContainer) {
             actionsContainer.classList.remove('hidden');
           }
-        }, 350);
+        }, 550);
       };
       
       cardEl.addEventListener('click', activeCardClickListener, { once: true });
