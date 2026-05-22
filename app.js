@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 
+  const a1Names = ['박주선', '안재현', '지용제', '박자연', '정찬희', '박승욱', '송지혜', '김아현'];
+
   let participants = []; // Array of { name: string, active: boolean }
   let winners = [];      // Array of { name: string, timestamp: string, card?: object }
   let currentWinner = '';
@@ -385,14 +387,19 @@ document.addEventListener('DOMContentLoaded', () => {
       
       let cardSpeechText = '';
       if (card) {
-        let rankSpeechName = card.rank;
-        if (card.rank === 'A') rankSpeechName = 'Ace';
-        else if (card.rank === 'J') rankSpeechName = 'Jack';
-        else if (card.rank === 'Q') rankSpeechName = 'Queen';
-        else if (card.rank === 'K') rankSpeechName = 'King';
-        
-        const suitSpeechName = card.suitName.charAt(0).toUpperCase() + card.suitName.slice(1);
-        cardSpeechText = ` You drew the ${rankSpeechName} of ${suitSpeechName}!`;
+        if (card.rank === 'Joker') {
+          const jokerColor = card.isRed ? 'Red' : 'Black';
+          cardSpeechText = ` You drew the ${jokerColor} Joker!`;
+        } else {
+          let rankSpeechName = card.rank;
+          if (card.rank === 'A') rankSpeechName = 'Ace';
+          else if (card.rank === 'J') rankSpeechName = 'Jack';
+          else if (card.rank === 'Q') rankSpeechName = 'Queen';
+          else if (card.rank === 'K') rankSpeechName = 'King';
+          
+          const suitSpeechName = card.suitName.charAt(0).toUpperCase() + card.suitName.slice(1);
+          cardSpeechText = ` You drew the ${rankSpeechName} of ${suitSpeechName}!`;
+        }
       }
       
       const utterance = new SpeechSynthesisUtterance(`Congratulations. The questioner for this session is ${englishOrderedName}.${cardSpeechText}`);
@@ -480,15 +487,33 @@ document.addEventListener('DOMContentLoaded', () => {
     
     currentWinner = chosenCandidate.name;
     
-    // Pick a random card from the 52-card standard deck
-    const randomSuit = SUITS[Math.floor(Math.random() * SUITS.length)];
-    const randomRank = RANKS[Math.floor(Math.random() * RANKS.length)];
-    currentDrawnCard = {
-      rank: randomRank,
-      suitSymbol: randomSuit.symbol,
-      suitName: randomSuit.name,
-      isRed: randomSuit.isRed
-    };
+    // Pick card based on authority groups and special Joker overrides
+    if (currentWinner === '박자연') {
+      currentDrawnCard = {
+        rank: 'Joker',
+        suitSymbol: '★',
+        suitName: 'joker',
+        isRed: false
+      };
+    } else if (currentWinner === '강혜진') {
+      currentDrawnCard = {
+        rank: 'Joker',
+        suitSymbol: '★',
+        suitName: 'joker',
+        isRed: true
+      };
+    } else {
+      const isA1 = a1Names.includes(currentWinner);
+      const groupRanks = isA1 ? ['A', '3', '5', '7', '9', 'J', 'K'] : ['2', '4', '6', '8', '10', 'Q'];
+      const randomSuit = SUITS[Math.floor(Math.random() * SUITS.length)];
+      const randomRank = groupRanks[Math.floor(Math.random() * groupRanks.length)];
+      currentDrawnCard = {
+        rank: randomRank,
+        suitSymbol: randomSuit.symbol,
+        suitName: randomSuit.name,
+        isRed: randomSuit.isRed
+      };
+    }
     
     isDrawing = true;
     btnDraw.disabled = true;
@@ -630,6 +655,18 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         cardEl.classList.remove('suit-red');
       }
+      
+      if (currentDrawnCard && currentDrawnCard.rank === 'Joker') {
+        cardEl.classList.add('joker-card');
+      } else {
+        cardEl.classList.remove('joker-card');
+      }
+    }
+    
+    // Update Card Back Face suit symbol dynamically
+    const backCenterSymbol = document.querySelector('.back-center-spade');
+    if (backCenterSymbol && currentDrawnCard) {
+      backCenterSymbol.innerText = currentDrawnCard.suitSymbol;
     }
     
     // Update Card Front Face Details (Rank, Suit, and Large watermark)
@@ -650,18 +687,25 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cardSuitLarge) cardSuitLarge.innerText = currentDrawnCard.suitSymbol;
       
       if (cardTitleBadge) {
-        let rankFullName = currentDrawnCard.rank;
-        if (currentDrawnCard.rank === 'A') rankFullName = 'ACE';
-        else if (currentDrawnCard.rank === 'J') rankFullName = 'JACK';
-        else if (currentDrawnCard.rank === 'Q') rankFullName = 'QUEEN';
-        else if (currentDrawnCard.rank === 'K') rankFullName = 'KING';
-        
-        const suitFullName = currentDrawnCard.suitName.toUpperCase();
-        cardTitleBadge.innerText = `THE ${rankFullName} OF ${suitFullName}`;
+        if (currentDrawnCard.rank === 'Joker') {
+          const colorText = currentDrawnCard.isRed ? 'RED' : 'BLACK';
+          cardTitleBadge.innerText = `THE ${colorText} JOKER`;
+        } else {
+          let rankFullName = currentDrawnCard.rank;
+          if (currentDrawnCard.rank === 'A') rankFullName = 'ACE';
+          else if (currentDrawnCard.rank === 'J') rankFullName = 'JACK';
+          else if (currentDrawnCard.rank === 'Q') rankFullName = 'QUEEN';
+          else if (currentDrawnCard.rank === 'K') rankFullName = 'KING';
+          
+          const suitFullName = currentDrawnCard.suitName.toUpperCase();
+          cardTitleBadge.innerText = `THE ${rankFullName} OF ${suitFullName}`;
+        }
       }
       
       if (cardMessage) {
-        if (currentDrawnCard.rank === 'A') {
+        if (currentDrawnCard.rank === 'Joker') {
+          cardMessage.innerText = '축하합니다! 전설적인 조커 카드를 뽑은 오늘의 주인공이십니다!';
+        } else if (currentDrawnCard.rank === 'A') {
           cardMessage.innerText = '축하합니다! 에이스 질문자로 선정되셨습니다.';
         } else {
           cardMessage.innerText = `축하합니다! 행운의 ${currentDrawnCard.rank}${currentDrawnCard.suitSymbol} 질문자로 선정되셨습니다.`;
@@ -672,7 +716,6 @@ document.addEventListener('DOMContentLoaded', () => {
     winnerRevealName.innerText = currentWinner;
     
     // Set dynamic authority badge (A1 or A2) based on name group
-    const a1Names = ['박주선', '안재현', '지용제', '박자연', '정찬희', '박승욱', '송지혜', '김아현'];
     const authorityEl = document.getElementById('winner-authority');
     if (authorityEl) {
       authorityEl.innerText = a1Names.includes(currentWinner) ? 'A1' : 'A2';
@@ -822,7 +865,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Prepend a beautifully styled card badge if the winner has card metadata
       if (w.card) {
         const badge = document.createElement('span');
-        badge.innerText = `${w.card.rank}${w.card.suitSymbol}`;
+        const displayRank = w.card.rank === 'Joker' ? 'JK' : w.card.rank;
+        badge.innerText = `${displayRank}${w.card.suitSymbol}`;
         badge.className = `history-card-badge ${w.card.isRed ? 'red-card' : 'black-card'}`;
         name.appendChild(badge);
       }

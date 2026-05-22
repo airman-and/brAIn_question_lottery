@@ -1353,6 +1353,45 @@ input:checked + .slider:before {
     0 0 45px rgba(244, 63, 94, 0.5) !important;
 }
 
+/* Red Card Back dynamic overrides */
+.winner-card.suit-red .card-back {
+  background: radial-gradient(circle at center, #2e0810 0%, #0f0205 65%, #050102 100%) !important;
+  box-shadow: 
+    inset 0 0 50px rgba(244, 63, 94, 0.25),
+    0 0 30px rgba(245, 158, 11, 0.2) !important;
+}
+.winner-card.suit-red .circ-line.c2 {
+  border-color: rgba(244, 63, 94, 0.25) !important;
+}
+.winner-card.suit-red .back-brand span,
+.winner-card.suit-red .back-center-spade {
+  color: #f43f5e !important;
+  text-shadow: 
+    0 0 20px rgba(244, 63, 94, 0.6),
+    0 0 40px rgba(244, 63, 94, 0.3) !important;
+}
+.winner-card.suit-red .back-brand {
+  text-shadow: 0 0 15px rgba(244, 63, 94, 0.5) !important;
+}
+.winner-card.suit-red .back-tech-text {
+  color: rgba(244, 63, 94, 0.7) !important;
+  text-shadow: 0 0 8px rgba(244, 63, 94, 0.3) !important;
+}
+.winner-card.suit-red .card-corner::after {
+  background-color: #f43f5e !important;
+  box-shadow: 0 0 8px #f43f5e !important;
+}
+
+/* Joker Card Corner Rank Sizing to prevent wrap overflow */
+.winner-card.joker-card .card-index .rank {
+  font-size: 0.95rem !important;
+  letter-spacing: normal !important;
+  margin-bottom: 2px;
+}
+.winner-card.joker-card .card-index .suit {
+  font-size: 1.2rem !important;
+}
+
 /* Trump Corner Indices */
 .card-index {
   position: absolute;
