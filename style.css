@@ -1110,49 +1110,223 @@ input:checked + .slider:before {
   100% { transform: scale(1.1); opacity: 1; }
 }
 
-.winner-card {
-  width: 400px;
-  min-height: 580px;
-  padding: 24px;
+/* ==========================================================================
+   Winner Reveal Playing Card / Trump Card Layout
+   ========================================================================== */
+
+/* Perspective Wrapper */
+.winner-card-container {
+  perspective: 1800px;
+  width: 420px;
+  height: 620px;
+  position: relative;
+  z-index: 2;
+}
+
+/* 3D Double-Sided Card Structure */
+.winner-card.playing-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+  cursor: pointer;
+  border-radius: 24px;
+  border: none !important;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.95);
+  animation: cardFlipReveal 1.4s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
+}
+
+/* Shared Face Styling */
+.card-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* CARD BACK: Cyber-Victorian Technological Gold-Emerald Lattice */
+.card-back {
+  background: radial-gradient(circle at center, #0a3d2c 0%, #03140e 65%, #010705 100%);
+  border: 3px solid rgba(245, 158, 11, 0.8);
+  box-shadow: 
+    inset 0 0 50px rgba(0, 255, 196, 0.2),
+    0 0 30px rgba(245, 158, 11, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+/* Shimmering Tech Corner Brackets */
+.card-corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(245, 158, 11, 0.85);
+  pointer-events: none;
+  z-index: 5;
+}
+.corner-tl { top: 16px; left: 16px; border-right: none; border-bottom: none; }
+.corner-tr { top: 16px; right: 16px; border-left: none; border-bottom: none; }
+.corner-bl { bottom: 16px; left: 16px; border-right: none; border-top: none; }
+.corner-br { bottom: 16px; right: 16px; border-left: none; border-top: none; }
+
+.corner-tl::after, .corner-tr::after, .corner-bl::after, .corner-br::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: var(--primary-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--primary-accent);
+}
+.corner-tl::after { top: -4px; left: -4px; }
+.corner-tr::after { top: -4px; right: -4px; }
+.corner-bl::after { bottom: -4px; left: -4px; }
+.corner-br::after { bottom: -4px; right: -4px; }
+
+/* Elegant Inner Golden Lace Border */
+.back-inner-border {
+  width: calc(100% - 32px);
+  height: calc(100% - 32px);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  text-align: center;
-  z-index: 2;
+  padding: 30px 20px;
   position: relative;
-  overflow: hidden;
-  border-radius: 24px;
-  background: linear-gradient(135deg, rgba(6, 19, 15, 0.92) 0%, rgba(2, 6, 5, 0.98) 100%);
-  border: 1px solid rgba(0, 255, 196, 0.4) !important;
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9),
-              0 0 60px rgba(0, 255, 196, 0.15),
-              inset 0 0 30px rgba(0, 255, 196, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
-  animation: popInWinner 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  transform-style: preserve-3d;
-  transition: transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.2s ease;
+  background: rgba(3, 10, 8, 0.4);
 }
 
-/* Translucent Large brAIn Watermark in the background */
-.winner-card::before {
-  content: "";
+.back-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--text-primary);
+  text-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+}
+.back-brand span {
+  color: var(--gold-accent);
+}
+
+/* Concentric Technology Circles */
+.back-pattern-circ {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 260px;
-  height: 260px;
-  background-image: url('brAIn_logo_v2.png');
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0.03;
+  width: 240px;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
-  z-index: 0;
+}
+.circ-line {
+  position: absolute;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 50%;
+}
+.circ-line.c1 {
+  width: 100%;
+  height: 100%;
+  border-style: dashed;
+  animation: spinClockwise 35s infinite linear;
+}
+.circ-line.c2 {
+  width: 75%;
+  height: 75%;
+  border-color: rgba(0, 255, 196, 0.25);
+  animation: spinCounterClockwise 25s infinite linear;
+}
+.circ-line.c3 {
+  width: 50%;
+  height: 50%;
+  border-style: dotted;
+  animation: spinClockwise 15s infinite linear;
 }
 
-/* Card Holographic Foil Gradient Effect */
+/* Golden Center Spade Badge */
+.back-center-spade {
+  font-size: 4.8rem;
+  color: var(--gold-accent);
+  text-shadow: 
+    0 0 20px rgba(245, 158, 11, 0.6),
+    0 0 40px rgba(245, 158, 11, 0.3);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.back-tech-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: rgba(245, 158, 11, 0.7);
+  text-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+}
+
+
+/* CARD FRONT: Emerald Elegance & Golden Royalty Ace of Spades */
+.card-front {
+  background: linear-gradient(135deg, #04120e 0%, #0a291e 50%, #030e0a 100%);
+  border: 3px solid rgba(245, 158, 11, 0.85);
+  box-shadow: 
+    inset 0 0 60px rgba(0, 255, 196, 0.25),
+    0 0 40px rgba(0, 255, 196, 0.2);
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  z-index: 1;
+}
+
+/* Trump Corner Indices */
+.card-index {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--gold-accent);
+  font-family: 'Outfit', 'Times New Roman', serif;
+  font-weight: 800;
+  line-height: 1.1;
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  user-select: none;
+  z-index: 10;
+}
+.card-index .rank {
+  font-size: 1.8rem;
+  letter-spacing: -0.05em;
+}
+.card-index .suit {
+  font-size: 1.5rem;
+}
+.card-index.top-left {
+  top: 24px;
+  left: 24px;
+}
+.card-index.bottom-right {
+  bottom: 24px;
+  right: 24px;
+  transform: rotate(180deg);
+}
+
+/* Luxury Holographic Foil & Reflection */
 .winner-card-hologram {
   position: absolute;
   top: 0;
@@ -1160,47 +1334,16 @@ input:checked + .slider:before {
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg, 
-    rgba(0, 255, 196, 0.05) 0%, 
-    rgba(16, 185, 129, 0.02) 25%, 
-    rgba(245, 158, 11, 0.04) 50%, 
-    rgba(0, 255, 196, 0.02) 75%, 
-    rgba(99, 102, 241, 0.05) 100%
+    rgba(0, 255, 196, 0.06) 0%, 
+    rgba(245, 158, 11, 0.06) 33%, 
+    rgba(16, 185, 129, 0.03) 66%, 
+    rgba(0, 255, 196, 0.08) 100%
   );
   mix-blend-mode: color-dodge;
   pointer-events: none;
-  z-index: 1;
-  opacity: 0.7;
+  z-index: 4;
+  opacity: 0.85;
 }
-
-/* 3D Spin Entry Animation */
-@keyframes popInWinner {
-  0% {
-    transform: perspective(1500px) rotateY(-180deg) rotateX(15deg) scale(0.4) translateY(100px);
-    opacity: 0;
-  }
-  70% {
-    transform: perspective(1500px) rotateY(15deg) rotateX(-5deg) scale(1.04);
-    opacity: 1;
-  }
-  100% {
-    transform: perspective(1500px) rotateY(0deg) rotateX(0deg) scale(1) translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Technical Cybermatic Corner Brackets */
-.card-corner {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--primary-accent);
-  pointer-events: none;
-  z-index: 3;
-}
-.corner-tl { top: 12px; left: 12px; border-right: none; border-bottom: none; }
-.corner-tr { top: 12px; right: 12px; border-left: none; border-bottom: none; }
-.corner-bl { bottom: 12px; left: 12px; border-right: none; border-top: none; }
-.corner-br { bottom: 12px; right: 12px; border-left: none; border-top: none; }
 
 .winner-card-shine {
   position: absolute;
@@ -1208,242 +1351,181 @@ input:checked + .slider:before {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.2) 0%, transparent 65%);
   pointer-events: none;
-  z-index: 4;
+  z-index: 5;
 }
 
-/* Cyber Card Inner Frame */
-.card-inner-frame {
+/* Card Front Inner Frame */
+.card-front .card-inner-frame {
   width: 100%;
   height: 100%;
-  border: 1px solid rgba(0, 255, 196, 0.15);
-  border-radius: 18px;
-  padding: 24px 20px 16px 20px;
-  background: rgba(3, 10, 8, 0.45);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 16px;
+  padding: 36px 20px 20px 20px;
+  background: rgba(3, 10, 8, 0.6);
   backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  z-index: 2;
-  box-shadow: inset 0 0 20px rgba(0, 255, 196, 0.05);
-}
-
-/* Top Row: Tech Logo + SIM-style IC Chip */
-.card-top-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 8px;
-}
-
-.card-brand {
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.3rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  color: var(--text-primary);
-  text-shadow: 0 0 10px rgba(var(--primary-accent-rgb), 0.3);
-}
-
-.card-brand span {
-  color: var(--primary-accent);
-}
-
-/* Smart card IC chip container */
-.card-chip {
-  width: 45px;
-  height: 35px;
-  background: linear-gradient(135deg, #ffd54f 0%, #ffb300 50%, #ffa000 100%);
-  border-radius: 6px;
   position: relative;
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  box-shadow: 0 0 8px rgba(255, 213, 79, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  overflow: hidden;
+  z-index: 3;
+  box-shadow: inset 0 0 30px rgba(0, 255, 196, 0.05);
 }
 
-.chip-line {
+/* Central Huge Decorative Spade Symbol */
+.card-suit-large {
   position: absolute;
-  background-color: rgba(94, 69, 0, 0.65);
-}
-
-.line-h1 { width: 100%; height: 1.5px; top: 33%; left: 0; }
-.line-h2 { width: 100%; height: 1.5px; top: 66%; left: 0; }
-.line-v1 { width: 1.5px; height: 100%; left: 33%; top: 0; }
-.line-v2 { width: 1.5px; height: 100%; left: 66%; top: 0; }
-
-.chip-inner {
-  position: absolute;
-  top: 25%;
-  left: 25%;
-  width: 50%;
-  height: 50%;
-  background: linear-gradient(135deg, #ffe082 0%, #ffca28 100%);
-  border-radius: 4px;
-  border: 1px solid rgba(94, 69, 0, 0.5);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  font-size: 16.5rem;
+  color: rgba(245, 158, 11, 0.06);
+  text-shadow: 0 0 40px rgba(245, 158, 11, 0.15);
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .winner-badge {
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.15);
+  border: 1.5px solid rgba(245, 158, 11, 0.55);
   color: var(--gold-accent);
-  padding: 4px 14px;
-  font-size: 0.72rem;
+  padding: 6px 18px;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.3em;
   border-radius: 20px;
-  margin-bottom: 12px;
   margin-top: 10px;
   font-family: 'Outfit', sans-serif;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.1);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
   z-index: 2;
+  text-transform: uppercase;
 }
 
 .winner-title {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 600;
-  margin-bottom: 4px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  margin-top: 12px;
   z-index: 2;
 }
 
-/* Premium Metallic Glass Name Plate */
+/* Gold-Framed Name Plate */
 .winner-name-plate {
   width: 100%;
-  padding: 16px 10px;
-  background: rgba(2, 6, 5, 0.75);
-  border: 1px solid rgba(0, 255, 196, 0.2);
-  border-left: 4px solid var(--primary-accent);
-  border-right: 4px solid var(--primary-accent);
+  padding: 20px 10px;
+  background: rgba(1, 4, 3, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-left: 5px solid var(--gold-accent);
+  border-right: 5px solid var(--gold-accent);
   border-radius: 12px;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9),
-              0 10px 25px rgba(0, 0, 0, 0.5);
-  margin: 10px 0 14px 0;
+  box-shadow: 
+    inset 0 0 25px rgba(0, 0, 0, 0.95),
+    0 15px 35px rgba(0, 0, 0, 0.6);
+  margin: 18px 0;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.winner-name-glow-container {
-  position: relative;
-}
-
 .winner-reveal-name {
   font-family: 'Black Han Sans', 'Outfit', sans-serif;
-  font-size: 4.2rem;
+  font-size: 4.5rem;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: 0.05em;
   line-height: 1.1;
-  text-shadow: 0 0 25px rgba(var(--primary-accent-rgb), 0.95),
-               0 0 45px rgba(var(--primary-accent-rgb), 0.5);
+  text-shadow: 
+    0 0 25px rgba(0, 255, 196, 0.95),
+    0 0 45px rgba(0, 255, 196, 0.5);
   animation: textBeat 0.5s infinite alternate ease-in-out;
 }
 
-@keyframes textBeat {
-  0% { transform: scale(0.98); }
-  100% { transform: scale(1.02); }
-}
-
 .winner-card-message {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--text-secondary);
-  margin-bottom: 12px;
-  line-height: 1.5;
+  line-height: 1.6;
+  margin-bottom: 16px;
   z-index: 2;
 }
 
-/* Tech Meta Grid */
-.card-meta {
+/* Front Footer Decor */
+.card-footer-decor {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin: 12px 0;
-  background: rgba(2, 6, 5, 0.5);
-  padding: 8px 12px;
-  border: 1px solid rgba(16, 185, 129, 0.1);
-  border-radius: 8px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-.meta-col {
-  display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 12px;
+  z-index: 2;
+}
+.decor-dot {
+  width: 5px;
+  height: 5px;
+  background-color: var(--gold-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--gold-accent);
+}
+.decor-line {
   flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.5), transparent);
 }
-
-.meta-col:not(:last-child) {
-  border-right: 1px solid rgba(16, 185, 129, 0.1);
-}
-
-.meta-lbl {
-  font-size: 0.6rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.05em;
-  margin-bottom: 2px;
-  font-weight: 500;
-}
-
-.meta-val {
-  font-size: 0.72rem;
-  color: var(--primary-accent);
+.decor-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-/* Footer Info & Barcode */
-.card-footer-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-top: 6px;
-  border-top: 1px dashed rgba(16, 185, 129, 0.15);
-  padding-top: 10px;
-}
-
-.barcode {
-  display: flex;
-  gap: 2.2px;
-  height: 20px;
-  align-items: stretch;
-  opacity: 0.8;
-}
-
-.bar-line {
-  background-color: var(--primary-accent);
-  box-shadow: 0 0 4px rgba(var(--primary-accent-rgb), 0.3);
-}
-
-.b-thin { width: 1.2px; }
-.b-medium { width: 2.5px; }
-.b-thick { width: 4.5px; }
-
-.card-serial {
-  font-family: 'Outfit', monospace;
-  font-size: 0.62rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.05em;
+  color: rgba(245, 158, 11, 0.85);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
 }
 
 .winner-modal-actions {
   width: 100%;
-  z-index: 2;
-  margin-top: 16px;
+  z-index: 10;
+  margin-top: 8px;
 }
 
 .btn-large {
   width: 100%;
-  padding: 13px 24px;
-  font-size: 0.95rem;
-  letter-spacing: 0.05em;
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--gold-accent) 0%, #b45309 100%);
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+.btn-large:hover {
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+  transform: translateY(-2px);
+}
+
+/* 3D Spin Flip-Reveal Keyframe */
+@keyframes cardFlipReveal {
+  0% {
+    transform: perspective(1800px) rotateY(-360deg) rotateX(25deg) scale(0.35) translateY(120px);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  50% {
+    transform: perspective(1800px) rotateY(-90deg) rotateX(-15deg) scale(1.15);
+  }
+  85% {
+    transform: perspective(1800px) rotateY(165deg) rotateX(10deg) scale(0.97);
+  }
+  100% {
+    transform: perspective(1800px) rotateY(180deg) rotateX(0deg) scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 /* ==========================================================================

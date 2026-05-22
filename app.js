@@ -586,6 +586,10 @@ document.addEventListener('DOMContentLoaded', () => {
     saveWinners();
     
     // Set UI
+    const cardEl = document.querySelector('.winner-card');
+    if (cardEl) {
+      cardEl.style.transform = '';
+    }
     winnerRevealName.innerText = currentWinner;
     winnerModal.classList.remove('hidden');
     setTimeout(() => {
@@ -614,7 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardEl = document.querySelector('.winner-card');
     const shineEl = document.querySelector('.winner-card-shine');
     if (cardEl) {
-      cardEl.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+      cardEl.style.transform = '';
       cardEl.style.boxShadow = '';
       if (shineEl) {
         shineEl.style.background = '';
@@ -850,7 +854,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const rotateY = ((x - centerX) / centerX) * 15;
 
       // Apply 3D matrix transform
-      cardElement.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+      cardElement.style.transform = `perspective(1800px) rotateX(${rotateX}deg) rotateY(${180 - rotateY}deg) scale(1.03)`;
       cardElement.style.boxShadow = `
         0 45px 90px rgba(0, 0, 0, 0.95),
         0 0 75px rgba(0, 255, 196, 0.25),
@@ -872,7 +876,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cardElement.addEventListener('mouseleave', () => {
       // Smoothly return card to neutral orientation
-      cardElement.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+      cardElement.style.transform = `perspective(1800px) rotateX(0deg) rotateY(180deg) scale(1)`;
       cardElement.style.boxShadow = '';
 
       if (shineElement) {

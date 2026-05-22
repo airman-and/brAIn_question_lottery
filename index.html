@@ -183,78 +183,80 @@
   <!-- Spectacular Winner Reveal Modal Modal -->
   <div id="winner-modal" class="winner-modal-overlay hidden">
     <div class="winner-modal-glow"></div>
-    <div class="winner-card glass-panel">
-      <!-- Cybermatic Corner Brackets -->
-      <div class="card-corner corner-tl"></div>
-      <div class="card-corner corner-tr"></div>
-      <div class="card-corner corner-bl"></div>
-      <div class="card-corner corner-br"></div>
-
-      <!-- Holographic Shine & Foil overlay -->
-      <div class="winner-card-shine"></div>
-      <div class="winner-card-hologram"></div>
-
-      <!-- Cyber Card Inner Frame for structured borders -->
-      <div class="card-inner-frame">
-        <!-- Card Header Info -->
-        <div class="card-top-row">
-          <div class="card-brand">br<span>AI</span>n</div>
-          <div class="card-chip">
-            <div class="chip-line line-h1"></div>
-            <div class="chip-line line-h2"></div>
-            <div class="chip-line line-v1"></div>
-            <div class="chip-line line-v2"></div>
-            <div class="chip-inner"></div>
-          </div>
-        </div>
-
-        <div class="winner-badge">CONGRATULATIONS</div>
-        <h3 class="winner-title">오늘의 질문자</h3>
+    
+    <div class="winner-card-container">
+      <div class="winner-card playing-card">
         
-        <!-- Premium Structured Name Plate -->
-        <div class="winner-name-plate">
-          <div class="winner-name-glow-container">
-            <div id="winner-reveal-name" class="winner-reveal-name">박주선</div>
-          </div>
-        </div>
-        
-        <p class="winner-card-message">축하합니다! 이번 질문자로 선정되셨습니다.</p>
+        <!-- Card FACE: BACK SIDE -->
+        <div class="card-face card-back">
+          <!-- Cyber-Victorian Card Corner Ornaments -->
+          <div class="card-corner corner-tl"></div>
+          <div class="card-corner corner-tr"></div>
+          <div class="card-corner corner-bl"></div>
+          <div class="card-corner corner-br"></div>
 
-        <!-- Technical Metadata -->
-        <div class="card-meta">
-          <div class="meta-col">
-            <span class="meta-lbl">AUTHORITY</span>
-            <span class="meta-val">brAIn LABS</span>
-          </div>
-          <div class="meta-col">
-            <span class="meta-lbl">CLASS</span>
-            <span class="meta-val">VIP GUEST</span>
-          </div>
-          <div class="meta-col">
-            <span class="meta-lbl">ISSUE DATE</span>
-            <span class="meta-val">2026.05.22</span>
+          <div class="back-inner-border">
+            <div class="back-brand">br<span>AI</span>n</div>
+            <div class="back-pattern-circ">
+              <div class="circ-line c1"></div>
+              <div class="circ-line c2"></div>
+              <div class="circ-line c3"></div>
+            </div>
+            <div class="back-center-spade">♠</div>
+            <div class="back-tech-text">SKKU AI SOCIETY</div>
           </div>
         </div>
 
-        <!-- High-Tech Barcode & Serial -->
-        <div class="card-footer-info">
-          <div class="barcode">
-            <div class="bar-line b-thin"></div>
-            <div class="bar-line b-thick"></div>
-            <div class="bar-line b-medium"></div>
-            <div class="bar-line b-thin"></div>
-            <div class="bar-line b-thick"></div>
-            <div class="bar-line b-medium"></div>
-            <div class="bar-line b-thin"></div>
-            <div class="bar-line b-thick"></div>
-            <div class="bar-line b-thin"></div>
+        <!-- Card FACE: FRONT SIDE -->
+        <div class="card-face card-front">
+          <!-- Standard Trump Card Index (Top Left) -->
+          <div class="card-index top-left">
+            <span class="rank">A</span>
+            <span class="suit">♠</span>
           </div>
-          <div class="card-serial">ID: brAIn-2026-LOTTERY</div>
+          
+          <!-- Standard Trump Card Index (Bottom Right - Inverted) -->
+          <div class="card-index bottom-right">
+            <span class="rank">A</span>
+            <span class="suit">♠</span>
+          </div>
+
+          <!-- Holographic Foil & Shimmer overlay -->
+          <div class="winner-card-shine"></div>
+          <div class="winner-card-hologram"></div>
+
+          <!-- Card Inner Frame -->
+          <div class="card-inner-frame">
+            <!-- Central Huge Decorative Spade Symbol -->
+            <div class="card-suit-large">♠</div>
+            
+            <div class="winner-badge">THE ACE QUESTIONER</div>
+            <h3 class="winner-title">오늘의 주인공</h3>
+            
+            <!-- Premium Structured Name Plate -->
+            <div class="winner-name-plate">
+              <div class="winner-name-glow-container">
+                <div id="winner-reveal-name" class="winner-reveal-name">박주선</div>
+              </div>
+            </div>
+            
+            <p class="winner-card-message">축하합니다! 에이스 질문자로 선정되셨습니다.</p>
+
+            <!-- Decors: Gold-emerald playing card footer -->
+            <div class="card-footer-decor">
+              <span class="decor-dot"></span>
+              <span class="decor-line"></span>
+              <span class="decor-text">SKKU brAIn EDITION</span>
+              <span class="decor-line"></span>
+              <span class="decor-dot"></span>
+            </div>
+
+            <div class="winner-modal-actions">
+              <button id="btn-close-winner" class="btn btn-primary btn-large">추첨 계속하기</button>
+            </div>
+          </div>
         </div>
-      </div>
-      
-      <div class="winner-modal-actions">
-        <button id="btn-close-winner" class="btn btn-primary btn-large">추첨 계속하기</button>
+
       </div>
     </div>
   </div>
