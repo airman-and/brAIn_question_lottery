@@ -339,13 +339,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Helper to convert Korean name (Family-Name + Given-Name) to English order (Given-Name + Family-Name)
+  const convertToEnglishOrder = (name) => {
+    if (!name || typeof name !== 'string') return '';
+    
+    // List of common Korean double-character family names (복성)
+    const doubleFamilyNames = ['남궁', '황보', '제갈', '사공', '독고', '선우', '서문'];
+    
+    for (const doubleFam of doubleFamilyNames) {
+      if (name.startsWith(doubleFam) && name.length > doubleFam.length) {
+        const family = doubleFam;
+        const given = name.slice(doubleFam.length);
+        return `${given} ${family}`;
+      }
+    }
+    
+    // Default: First character is family name
+    if (name.length >= 2) {
+      const family = name.charAt(0);
+      const given = name.slice(1);
+      return `${given} ${family}`;
+    }
+    
+    return name;
+  };
+
   // Web Speech API English TTS
   const playWinnerTTS = (name) => {
     if ('speechSynthesis' in window) {
       // Cancel any ongoing synthesis to prevent queuing overlap
       window.speechSynthesis.cancel();
       
-      const utterance = new SpeechSynthesisUtterance(`Congratulations. The questioner for this session is ${name}.`);
+      // Convert name order for natural English pronunciation (e.g. 조현영 -> 현영 조)
+      const englishOrderedName = convertToEnglishOrder(name);
+      
+      const utterance = new SpeechSynthesisUtterance(`Congratulations. The questioner for this session is ${englishOrderedName}.`);
       utterance.lang = 'en-US';
       utterance.rate = 0.95; // A tiny bit slower for professional, majestic tone
       utterance.pitch = 1.0;
