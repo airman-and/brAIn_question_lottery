@@ -591,6 +591,14 @@ document.addEventListener('DOMContentLoaded', () => {
       cardEl.style.transform = '';
     }
     winnerRevealName.innerText = currentWinner;
+    
+    // Set dynamic authority badge (A1 or A2) based on name group
+    const a1Names = ['박주선', '안재현', '지용제', '박자연', '정찬희', '박승욱', '송지혜', '김아현'];
+    const authorityEl = document.getElementById('winner-authority');
+    if (authorityEl) {
+      authorityEl.innerText = a1Names.includes(currentWinner) ? 'A1' : 'A2';
+    }
+
     winnerModal.classList.remove('hidden');
     setTimeout(() => {
       winnerModal.classList.add('active');

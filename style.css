@@ -1161,8 +1161,7 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
-  transform: rotateY(0deg);
+  transform: rotateY(0deg) translateZ(1px);
 }
 
 /* Shimmering Tech Corner Brackets */
@@ -1288,11 +1287,10 @@ input:checked + .slider:before {
   box-shadow: 
     inset 0 0 60px rgba(0, 255, 196, 0.25),
     0 0 40px rgba(0, 255, 196, 0.2);
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) translateZ(1px);
   display: flex;
   flex-direction: column;
   padding: 16px;
-  z-index: 1;
 }
 
 /* Trump Corner Indices */
