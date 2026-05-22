@@ -326,7 +326,46 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================================================
 
   let isDrawing = false;
-  let shuffleInterval = null;
+  let shuffleTimeoutId = null;
+  let drawStartTime = 0;
+
+  // Pre-load voices for SpeechSynthesis (crucial for Chrome/Edge async loading)
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.getVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+  }
+
+  // Web Speech API English TTS
+  const playWinnerTTS = (name) => {
+    if ('speechSynthesis' in window) {
+      // Cancel any ongoing synthesis to prevent queuing overlap
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(`Congratulations. The questioner for this session is ${name}.`);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.95; // A tiny bit slower for professional, majestic tone
+      utterance.pitch = 1.0;
+      
+      const voices = window.speechSynthesis.getVoices();
+      // Try to find a high-quality Google voice, or fall back to any English voice
+      let selectedVoice = voices.find(v => v.lang === 'en-US' && v.name.includes('Google'));
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.startsWith('en'));
+      }
+      
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+      
+      window.speechSynthesis.speak(utterance);
+    } else {
+      console.warn('Text-to-Speech is not supported in this browser.');
+    }
+  };
 
   // Trigger White Transition Flash Overlay
   const triggerWhiteFlash = () => {
@@ -423,12 +462,42 @@ document.addEventListener('DOMContentLoaded', () => {
         skipBuildup();
       });
 
-      // Rapidly Shuffle name text box
-      shuffleInterval = setInterval(() => {
+      // Add glitch class for cyberpunk digital noise buildup
+      shuffleName.classList.add('glitch');
+
+      // Initialize draw start time for dynamic deceleration shuffler
+      drawStartTime = Date.now();
+
+      // Dynamic Shuffler Deceleration (Roulette Slowdown)
+      const shuffleTick = () => {
+        if (!isDrawing) return;
+
+        const elapsed = (Date.now() - drawStartTime) / 1000.0;
         const tempIndex = Math.floor(Math.random() * pool.length);
-        shuffleName.innerText = pool[tempIndex].name;
-        playPlipSound(900 + Math.random() * 200, 0.04);
-      }, 60);
+        const currentName = pool[tempIndex].name;
+
+        shuffleName.innerText = currentName;
+        // set data-text attribute for CSS glitch clipping duplication
+        shuffleName.setAttribute('data-text', currentName);
+
+        // Lower key frequencies as the shuffler slows down to give heavy friction feel
+        const currentFreq = 950 + Math.random() * 150 - Math.min(elapsed * 45, 350);
+        playPlipSound(currentFreq, 0.04);
+
+        // Climax deceleration formula: exponential delay slow down from 5.5s to 9.5s
+        let delay = 60;
+        const targetClimaxTime = 9.5;
+
+        if (elapsed > 5.5) {
+          const t = (elapsed - 5.5) / (targetClimaxTime - 5.5);
+          delay = 60 + Math.pow(Math.min(t, 1.0), 3.0) * 440; // exponential decay up to ~500ms
+        }
+
+        shuffleTimeoutId = setTimeout(shuffleTick, delay);
+      };
+
+      // Start recursive loop
+      shuffleTick();
 
       // Listen for video updates with high-precision cut-off at 9.5 seconds
       const checkVideoTime = () => {
@@ -458,7 +527,11 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const completeCinematicDraw = () => {
-    clearInterval(shuffleInterval);
+    if (shuffleTimeoutId) {
+      clearTimeout(shuffleTimeoutId);
+      shuffleTimeoutId = null;
+    }
+    shuffleName.classList.remove('glitch');
     buildupVideo.pause();
     triggerWhiteFlash();
     
@@ -494,6 +567,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // SFX & VFX triggers
     playWinnerSynthSFX();
     startConfetti();
+
+    // English AI Voice synthesization with a slight delay to blend perfectly with celebratory chords
+    setTimeout(() => {
+      playWinnerTTS(currentWinner);
+    }, 600);
 
     // Render updates
     renderParticipants();
