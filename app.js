@@ -903,7 +903,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hide actions container initially
     const actionsContainer = document.getElementById('winner-actions-container');
     if (actionsContainer) {
-      actionsContainer.classList.add('hidden');
+      actionsContainer.classList.remove('visible');
     }
 
     winnerModal.classList.remove('hidden');
@@ -930,9 +930,12 @@ document.addEventListener('DOMContentLoaded', () => {
         playWinnerTTS(currentWinner, currentDrawnCard);
       }, 1000);
 
-      if (actionsContainer) {
-        actionsContainer.classList.remove('hidden');
-      }
+      // Smoothly fade in actionsContainer after card flip completes (1.0s)
+      setTimeout(() => {
+        if (actionsContainer) {
+          actionsContainer.classList.add('visible');
+        }
+      }, 1200);
     } else {
       // Click to Flip manual mode
       activeCardClickListener = () => {
@@ -949,11 +952,14 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             playWinnerTTS(currentWinner, currentDrawnCard);
           }, 400);
-
-          if (actionsContainer) {
-            actionsContainer.classList.remove('hidden');
-          }
         }, 550);
+
+        // Smoothly fade in actionsContainer after card flip completes (1.0s)
+        setTimeout(() => {
+          if (actionsContainer) {
+            actionsContainer.classList.add('visible');
+          }
+        }, 1200);
       };
       
       cardEl.addEventListener('click', activeCardClickListener, { once: true });
@@ -967,6 +973,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Close Winner Modal
   const closeWinnerModal = () => {
     winnerModal.classList.remove('active');
+    
+    // Hide actions container smoothly
+    const actionsContainer = document.getElementById('winner-actions-container');
+    if (actionsContainer) {
+      actionsContainer.classList.remove('visible');
+    }
     
     // Reset card tilt styles back to neutral
     const cardEl = document.querySelector('.winner-card');

@@ -1623,7 +1623,17 @@ input:checked + .slider:before {
 .winner-modal-actions {
   width: 100%;
   z-index: 10;
-  margin-top: 8px;
+  margin-top: 18px;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.winner-modal-actions.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .btn-large {
@@ -1973,8 +1983,4 @@ input:checked + .slider:before {
 
 .footer-stat .joker-gold {
   color: var(--gold-accent) !important;
-}
-
-.winner-modal-actions.hidden {
-  display: none !important;
 }
