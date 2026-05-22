@@ -16,9 +16,19 @@ document.addEventListener('DOMContentLoaded', () => {
     '이주환', '정연재', '여수연', '김하경', '손지훈', '이승주'
   ];
 
+  const SUITS = [
+    { symbol: '♠', name: 'spades', isRed: false },
+    { symbol: '♥', name: 'hearts', isRed: true },
+    { symbol: '♦', name: 'diamonds', isRed: true },
+    { symbol: '♣', name: 'clubs', isRed: false }
+  ];
+
+  const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
   let participants = []; // Array of { name: string, active: boolean }
-  let winners = [];      // Array of { name: string, timestamp: string }
+  let winners = [];      // Array of { name: string, timestamp: string, card?: object }
   let currentWinner = '';
+  let currentDrawnCard = null;
 
   // LocalStorage Helper
   const loadState = () => {
@@ -365,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Web Speech API English TTS
-  const playWinnerTTS = (name) => {
+  const playWinnerTTS = (name, card) => {
     if ('speechSynthesis' in window) {
       // Cancel any ongoing synthesis to prevent queuing overlap
       window.speechSynthesis.cancel();
@@ -373,7 +383,19 @@ document.addEventListener('DOMContentLoaded', () => {
       // Convert name order for natural English pronunciation (e.g. 조현영 -> 현영 조)
       const englishOrderedName = convertToEnglishOrder(name);
       
-      const utterance = new SpeechSynthesisUtterance(`Congratulations. The questioner for this session is ${englishOrderedName}.`);
+      let cardSpeechText = '';
+      if (card) {
+        let rankSpeechName = card.rank;
+        if (card.rank === 'A') rankSpeechName = 'Ace';
+        else if (card.rank === 'J') rankSpeechName = 'Jack';
+        else if (card.rank === 'Q') rankSpeechName = 'Queen';
+        else if (card.rank === 'K') rankSpeechName = 'King';
+        
+        const suitSpeechName = card.suitName.charAt(0).toUpperCase() + card.suitName.slice(1);
+        cardSpeechText = ` You drew the ${rankSpeechName} of ${suitSpeechName}!`;
+      }
+      
+      const utterance = new SpeechSynthesisUtterance(`Congratulations. The questioner for this session is ${englishOrderedName}.${cardSpeechText}`);
       utterance.lang = 'en-US';
       utterance.rate = 0.95; // A tiny bit slower for professional, majestic tone
       utterance.pitch = 1.0;
@@ -457,6 +479,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     currentWinner = chosenCandidate.name;
+    
+    // Pick a random card from the 52-card standard deck
+    const randomSuit = SUITS[Math.floor(Math.random() * SUITS.length)];
+    const randomRank = RANKS[Math.floor(Math.random() * RANKS.length)];
+    currentDrawnCard = {
+      rank: randomRank,
+      suitSymbol: randomSuit.symbol,
+      suitName: randomSuit.name,
+      isRed: randomSuit.isRed
+    };
     
     isDrawing = true;
     btnDraw.disabled = true;
@@ -582,14 +614,61 @@ document.addEventListener('DOMContentLoaded', () => {
     const now = new Date();
     const timestampStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
     
-    winners.unshift({ name: currentWinner, timestamp: timestampStr });
+    winners.unshift({ 
+      name: currentWinner, 
+      timestamp: timestampStr,
+      card: currentDrawnCard
+    });
     saveWinners();
     
     // Set UI
     const cardEl = document.querySelector('.winner-card');
     if (cardEl) {
       cardEl.style.transform = '';
+      if (currentDrawnCard && currentDrawnCard.isRed) {
+        cardEl.classList.add('suit-red');
+      } else {
+        cardEl.classList.remove('suit-red');
+      }
     }
+    
+    // Update Card Front Face Details (Rank, Suit, and Large watermark)
+    if (currentDrawnCard) {
+      const indexTopLeftRank = document.querySelector('.card-index.top-left .rank');
+      const indexTopLeftSuit = document.querySelector('.card-index.top-left .suit');
+      const indexBottomRightRank = document.querySelector('.card-index.bottom-right .rank');
+      const indexBottomRightSuit = document.querySelector('.card-index.bottom-right .suit');
+      const cardSuitLarge = document.querySelector('.card-suit-large');
+      
+      const cardTitleBadge = document.getElementById('winner-card-title-badge');
+      const cardMessage = document.getElementById('winner-card-message');
+
+      if (indexTopLeftRank) indexTopLeftRank.innerText = currentDrawnCard.rank;
+      if (indexTopLeftSuit) indexTopLeftSuit.innerText = currentDrawnCard.suitSymbol;
+      if (indexBottomRightRank) indexBottomRightRank.innerText = currentDrawnCard.rank;
+      if (indexBottomRightSuit) indexBottomRightSuit.innerText = currentDrawnCard.suitSymbol;
+      if (cardSuitLarge) cardSuitLarge.innerText = currentDrawnCard.suitSymbol;
+      
+      if (cardTitleBadge) {
+        let rankFullName = currentDrawnCard.rank;
+        if (currentDrawnCard.rank === 'A') rankFullName = 'ACE';
+        else if (currentDrawnCard.rank === 'J') rankFullName = 'JACK';
+        else if (currentDrawnCard.rank === 'Q') rankFullName = 'QUEEN';
+        else if (currentDrawnCard.rank === 'K') rankFullName = 'KING';
+        
+        const suitFullName = currentDrawnCard.suitName.toUpperCase();
+        cardTitleBadge.innerText = `THE ${rankFullName} OF ${suitFullName}`;
+      }
+      
+      if (cardMessage) {
+        if (currentDrawnCard.rank === 'A') {
+          cardMessage.innerText = '축하합니다! 에이스 질문자로 선정되셨습니다.';
+        } else {
+          cardMessage.innerText = `축하합니다! 행운의 ${currentDrawnCard.rank}${currentDrawnCard.suitSymbol} 질문자로 선정되셨습니다.`;
+        }
+      }
+    }
+    
     winnerRevealName.innerText = currentWinner;
     
     // Set dynamic authority badge (A1 or A2) based on name group
@@ -610,7 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // English AI Voice synthesization with a slight delay to blend perfectly with celebratory chords
     setTimeout(() => {
-      playWinnerTTS(currentWinner);
+      playWinnerTTS(currentWinner, currentDrawnCard);
     }, 600);
 
     // Render updates
@@ -639,6 +718,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
       winnerModal.classList.add('hidden');
+      if (cardEl) {
+        cardEl.classList.remove('suit-red');
+      }
       
       // Reset state
       isDrawing = false;
@@ -736,7 +818,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const name = document.createElement('span');
       name.className = 'history-name';
-      name.innerText = w.name;
+      
+      // Prepend a beautifully styled card badge if the winner has card metadata
+      if (w.card) {
+        const badge = document.createElement('span');
+        badge.innerText = `${w.card.rank}${w.card.suitSymbol}`;
+        badge.className = `history-card-badge ${w.card.isRed ? 'red-card' : 'black-card'}`;
+        name.appendChild(badge);
+      }
+      
+      const nameText = document.createTextNode(w.name);
+      name.appendChild(nameText);
 
       const time = document.createElement('span');
       time.className = 'history-time';
@@ -863,10 +955,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Apply 3D matrix transform
       cardElement.style.transform = `perspective(1800px) rotateX(${rotateX}deg) rotateY(${180 - rotateY}deg) scale(1.03)`;
+      const isRedCard = cardElement.classList.contains('suit-red');
+      const accentColor = isRedCard ? '244, 63, 94' : '0, 255, 196';
+
       cardElement.style.boxShadow = `
         0 45px 90px rgba(0, 0, 0, 0.95),
-        0 0 75px rgba(0, 255, 196, 0.25),
-        inset 0 0 30px rgba(0, 255, 196, 0.15),
+        0 0 75px rgba(${accentColor}, 0.25),
+        inset 0 0 30px rgba(${accentColor}, 0.15),
         inset 0 1px 0 rgba(255, 255, 255, 0.25)
       `;
 
